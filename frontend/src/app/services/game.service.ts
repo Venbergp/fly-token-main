@@ -34,7 +34,7 @@ export interface GameState {
   providedIn: 'root'
 })
 export class GameService implements OnDestroy {
-  private readonly WS_URL = 'ws://188.245.90.243:3000';
+  private readonly WS_URL = 'wss://neuralfly.net:3000';
   private socket$?: WebSocketSubject<GameState>;
   private gameStateSubject = new BehaviorSubject<GameState>({
     fly: {

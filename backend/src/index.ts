@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import { WebSocketServer } from 'ws';
-import { createServer } from 'http';
+import { createServer } from 'https';
 import { GameService } from './services/GameService';
+import fs from 'fs';
+import path from 'path';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,7 +12,12 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-const server = createServer(app);
+const options = {
+  key: fs.readFileSync(path.join(__dirname, '../ssl/privkey.pem')),
+  cert: fs.readFileSync(path.join(__dirname, '../ssl/fullchain.pem'))
+};
+
+const server = createServer(options, app);
 const wss = new WebSocketServer({ server });
 const gameService = new GameService();
 
