@@ -1,0 +1,100 @@
+openapi: 3.0.0
+info:
+  title: FlyToken Backend API
+  description: API для управления состоянием игры FlyToken
+  version: 1.0.0
+  
+servers:
+  - url: http://localhost:3000
+    description: Локальный сервер разработки
+
+paths:
+  /api/game-state:
+    get:
+      summary: Получить текущее состояние игры
+      description: Возвращает позиции мухи и какашек, а также текущее состояние движения
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+        '500':
+          description: Внутренняя ошибка сервера
+          
+components:
+  schemas:
+    Position:
+      type: object
+      properties:
+        x:
+          type: number
+          description: Координата X
+          example: 0.5
+        y:
+          type: number
+          description: Координата Y
+          example: 0.1
+        z:
+          type: number
+          description: Координата Z
+          example: -0.3
+      required:
+        - x
+        - y
+        - z
+          
+    FlyState:
+      type: object
+      properties:
+        position:
+          $ref: '#/components/schemas/Position'
+        rotation:
+          $ref: '#/components/schemas/Position'
+        isMoving:
+          type: boolean
+          description: Находится ли муха в движении к цели
+          example: false
+        isFlying:
+          type: boolean
+          description: Находится ли муха в режиме свободного полета
+          example: true
+        currentTarget:
+          type: integer
+          nullable: true
+          description: ID текущей целевой какашки
+          example: 1
+      required:
+        - position
+        - rotation
+        - isMoving
+        - isFlying
+        - currentTarget
+          
+    PoopState:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор какашки
+          example: 1
+        position:
+          $ref: '#/components/schemas/Position'
+      required:
+        - id
+        - position
+          
+    GameState:
+      type: object
+      properties:
+        fly:
+          $ref: '#/components/schemas/FlyState'
+        poops:
+          type: array
+          items:
+            $ref: '#/components/schemas/PoopState'
+          description: Массив какашек на игровом поле
+      required:
+        - fly
+        - poops
